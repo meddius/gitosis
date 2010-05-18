@@ -37,7 +37,9 @@ def getSSHAuthorizedKeysPath(config):
 
 def getTemplateDir(config, group):
     try:
-        template = config.get("group %s" % group, 'template')
+        relTemplateDir = config.get("group %s" % group, 'template')
+        repositoryDir = getRepositoryDir(config)
+        template = os.path.join(repositoryDir, relTemplateDir)
     except (NoSectionError, NoOptionError):
         template = None
     return template
