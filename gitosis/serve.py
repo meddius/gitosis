@@ -90,7 +90,7 @@ def serve(
     path = match.group('path')
 
     # write access is always sufficient
-    (newpath, prefix, groupname) = access.haveAccess(
+    newpath = access.haveAccess(
         config=cfg,
         user=user,
         mode='writable',
@@ -99,7 +99,7 @@ def serve(
     if newpath is None:
         # didn't have write access; try once more with the popular
         # misspelling
-        (newpath, prefix, groupname) = access.haveAccess(
+        newpath = access.haveAccess(
             config=cfg,
             user=user,
             mode='writeable',
@@ -114,7 +114,7 @@ def serve(
     if newpath is None:
         # didn't have write access
 
-        (newpath, prefix, groupname) = access.haveAccess(
+        newpath = access.haveAccess(
             config=cfg,
             user=user,
             mode='readonly',
@@ -127,7 +127,7 @@ def serve(
             # didn't have write access and tried to write
             raise WriteAccessDenied()
 
-    (topdir, relpath) = newpath
+    (topdir, relpath, groupname) = newpath
     assert not relpath.endswith('.git'), \
            'git extension should have been stripped: %r' % relpath
     repopath = '%s.git' % relpath
