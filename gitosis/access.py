@@ -1,4 +1,4 @@
-import os, logging
+import os, logging, fnmatch
 from ConfigParser import NoSectionError, NoOptionError
 
 from gitosis import group
@@ -43,16 +43,20 @@ def haveAccess(config, user, mode, path):
 
         mapping = None
 
-        if path in repos:
-            log.debug(
-                'Access ok for %(user)r as %(mode)r on %(path)r'
-                % dict(
-                user=user,
-                mode=mode,
-                path=path,
-                ))
-            mapping = path
-        else:
+        # Added to support glob-type wildcards
+        for repo in repos:
+            if fnmatch.fnmatch(path, repo): 
+                mapping = path
+                log.debug(
+                    'Access ok for %(user)r as %(mode)r on %(path)r'
+                    % dict(
+                    user=user,
+                    mode=mode,
+                    path=path,
+                    ))
+                break
+
+        if mapping is None:
             try:
                 mapping = config.get('group %s' % groupname,
                                      'map %s %s' % (mode, path))
