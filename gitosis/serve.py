@@ -90,7 +90,7 @@ def serve(
     path = match.group('path')
 
     # write access is always sufficient
-    newpath = access.haveAccess(
+    (newpath, prefix, groupname) = access.haveAccess(
         config=cfg,
         user=user,
         mode='writable',
@@ -99,7 +99,7 @@ def serve(
     if newpath is None:
         # didn't have write access; try once more with the popular
         # misspelling
-        newpath = access.haveAccess(
+        (newpath, prefix, groupname) = access.haveAccess(
             config=cfg,
             user=user,
             mode='writeable',
@@ -114,7 +114,7 @@ def serve(
     if newpath is None:
         # didn't have write access
 
-        newpath = access.haveAccess(
+        (newpath, prefix, groupname) = access.haveAccess(
             config=cfg,
             user=user,
             mode='readonly',
@@ -143,7 +143,10 @@ def serve(
             p = os.path.join(p, segment)
             util.mkdir(p, 0750)
 
-        repository.init(path=fullpath)
+        tmpl = util.getTemplateDir(config=cfg, group=groupname)
+
+
+        repository.init(path=fullpath, template=tmpl)
         gitweb.set_descriptions(
             config=cfg,
             )
