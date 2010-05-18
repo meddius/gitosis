@@ -145,7 +145,6 @@ def serve(
 
         tmpl = util.getTemplateDir(config=cfg, group=groupname)
 
-
         repository.init(path=fullpath, template=tmpl)
         gitweb.set_descriptions(
             config=cfg,
