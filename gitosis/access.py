@@ -89,4 +89,4 @@ def haveAccess(config, user, mode, path):
                 prefix=prefix,
                 path=mapping,
                 ))
-            return (prefix, mapping)
+            return (prefix, mapping, groupname)
