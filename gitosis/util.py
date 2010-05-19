@@ -34,3 +34,12 @@ def getSSHAuthorizedKeysPath(config):
     except (NoSectionError, NoOptionError):
         path = os.path.expanduser('~/.ssh/authorized_keys')
     return path
+
+def getTemplateDir(config, group):
+    try:
+        relTemplateDir = config.get("group %s" % group, 'template')
+        repositoryDir = getRepositoryDir(config)
+        template = os.path.join(repositoryDir, relTemplateDir)
+    except (NoSectionError, NoOptionError):
+        template = None
+    return template

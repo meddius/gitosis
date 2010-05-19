@@ -127,7 +127,7 @@ def serve(
             # didn't have write access and tried to write
             raise WriteAccessDenied()
 
-    (topdir, relpath) = newpath
+    (topdir, relpath, groupname) = newpath
     assert not relpath.endswith('.git'), \
            'git extension should have been stripped: %r' % relpath
     repopath = '%s.git' % relpath
@@ -143,7 +143,9 @@ def serve(
             p = os.path.join(p, segment)
             util.mkdir(p, 0750)
 
-        repository.init(path=fullpath)
+        tmpl = util.getTemplateDir(config=cfg, group=groupname)
+
+        repository.init(path=fullpath, template=tmpl)
         gitweb.set_descriptions(
             config=cfg,
             )
