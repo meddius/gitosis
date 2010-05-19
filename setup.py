@@ -18,7 +18,7 @@ def subdir_contents(path):
 
 setup(
     name = "gitosis",
-    version = "0.2",
+    version = "0.2-meddius",
     packages = find_packages(),
 
     author = "Tommi Virtanen",
