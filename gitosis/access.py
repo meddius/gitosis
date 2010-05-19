@@ -42,11 +42,15 @@ def haveAccess(config, user, mode, path):
             repos = repos.split()
 
         mapping = None
+        globchild = False
 
         # Added to support glob-type wildcards
         for repo in repos:
             if fnmatch.fnmatch(path, repo): 
                 mapping = path
+                for c in ['*','[',']','[!','?']:
+                    if c in repo:
+                        globchild = True
                 log.debug(
                     'Access ok for %(user)r as %(mode)r on %(path)r'
                     % dict(
@@ -89,4 +93,4 @@ def haveAccess(config, user, mode, path):
                 prefix=prefix,
                 path=mapping,
                 ))
-            return (prefix, mapping, groupname)
+            return (prefix, mapping, groupname, globchild)

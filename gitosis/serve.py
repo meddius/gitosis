@@ -127,7 +127,7 @@ def serve(
             # didn't have write access and tried to write
             raise WriteAccessDenied()
 
-    (topdir, relpath, groupname) = newpath
+    (topdir, relpath, groupname, globchild) = newpath
     assert not relpath.endswith('.git'), \
            'git extension should have been stripped: %r' % relpath
     repopath = '%s.git' % relpath
@@ -136,6 +136,10 @@ def serve(
         # it doesn't exist on the filesystem, but the configuration
         # refers to it, we're serving a write request, and the user is
         # authorized to do that: create the repository on the fly
+
+        if verb in COMMANDS_READONLY:
+            if globchild: 
+                raise ReadAccessDenied()
 
         # create leading directories
         p = topdir
