@@ -14,6 +14,7 @@ from gitosis import gitweb
 from gitosis import gitdaemon
 from gitosis import app
 from gitosis import util
+from gitosis import snagit
 
 log = logging.getLogger('gitosis.serve')
 
@@ -127,19 +128,16 @@ def serve(
             # didn't have write access and tried to write
             raise WriteAccessDenied()
 
-    (topdir, relpath, groupname, globchild) = newpath
+    (topdir, relpath, groupname) = newpath
     assert not relpath.endswith('.git'), \
            'git extension should have been stripped: %r' % relpath
     repopath = '%s.git' % relpath
     fullpath = os.path.join(topdir, repopath)
-    if not os.path.exists(fullpath):
+    if (not os.path.exists(fullpath)
+        and verb in COMMANDS_WRITE):
         # it doesn't exist on the filesystem, but the configuration
         # refers to it, we're serving a write request, and the user is
         # authorized to do that: create the repository on the fly
-
-        if verb in COMMANDS_READONLY:
-            if globchild: 
-                raise ReadAccessDenied()
 
         # create leading directories
         p = topdir
@@ -197,6 +195,14 @@ class Main(app.App):
 
         os.chdir(os.path.expanduser('~'))
 
+        if (cmd == "snagit list-repos"):
+            try:
+                snagit.list_repos(cfg, user, cmd)
+                sys.exit(0)
+            except Exception, e:
+                main_log.error('%s', e)
+                sys.exit(1)
+        
         try:
             newcmd = serve(
                 cfg=cfg,
